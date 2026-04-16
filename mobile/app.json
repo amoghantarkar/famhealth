@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "FamHealth",
+    "slug": "famhealth",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.famhealth.app"
+    },
+    "android": {
+      "package": "com.famhealth.app",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_MEDIA_IMAGES"
+      ]
+    },
+    "extra": {
+      "apiBaseUrl": "http://localhost:8080/api"
+    }
+  }
+}
