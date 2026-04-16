@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/famhealth}
+    username: ${DB_USERNAME:famhealth}
+    password: ${DB_PASSWORD:famhealth}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+
+server:
+  port: 8080
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:change_me_very_long_secret_key_change_me_very_long_secret_key}
+    access-token-minutes: 30
+    refresh-token-days: 7
+  storage:
+    bucket: ${STORAGE_BUCKET:famhealth-records}
+    endpoint: ${STORAGE_ENDPOINT:http://minio:9000}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
