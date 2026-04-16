@@ -18,8 +18,8 @@ public class RecordController {
     private final RequestUserResolver resolver;
 
     @PostMapping(value = "/api/records/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public RecordUploadResponse upload(@RequestParam Long profileId, @RequestParam String recordType, @RequestParam(required = false) String providerName,
-                                       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate recordDate, @RequestPart MultipartFile file,
+    public RecordUploadResponse upload(@RequestParam(required = false) Long profileId, @RequestParam(required = false) String recordType, @RequestParam(required = false) String providerName,
+                                       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate recordDate, @RequestPart MultipartFile file,
                                        @RequestHeader("X-User-Id") String uid, @RequestHeader("X-Account-Id") String aid){
         return service.upload(profileId, recordType, providerName, recordDate, file, resolver.fromHeaders(uid, aid));
     }

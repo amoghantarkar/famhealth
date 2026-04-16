@@ -19,16 +19,16 @@ A production-style MVP for a **personal health record organizer** (not diagnosis
 
 ---
 
-## Quick Start
+## Run Locally (Laptop + Phone Emulator)
 
-### Prerequisites
+### 1) Prerequisites
 - Docker Desktop
 - Node.js 20+
 - npm 10+
 - Java 17 (optional if you run backend only through Docker)
 - Expo CLI (`npm i -g expo eas-cli`)
 
-### Backend
+### 2) Start backend + database
 ```bash
 cp .env.backend.example .env.backend
 docker compose up --build
@@ -36,7 +36,7 @@ docker compose up --build
 Backend: `http://localhost:8080`
 Swagger: `http://localhost:8080/swagger-ui.html`
 
-### Mobile
+### 3) Start mobile app (Expo)
 ```bash
 cd mobile
 npm install
@@ -47,7 +47,7 @@ Then:
 - press `i` for iOS simulator (macOS), or
 - scan QR with Expo Go on physical phone.
 
-### Make mobile reach backend from phone
+### 4) Make mobile reach backend from phone
 If testing on a physical Android device, `localhost` inside the app points to the phone, not your laptop.
 
 Use one of these:
@@ -57,7 +57,7 @@ Use one of these:
 
 Update `mobile/src/api/client.ts` base URL accordingly.
 
-### Quick smoke test
+### 5) Quick smoke test
 1. `POST /api/auth/signup`
 2. Add headers to requests:
    - `X-User-Id: <userId from signup/login>`
@@ -66,6 +66,31 @@ Update `mobile/src/api/client.ts` base URL accordingly.
 4. `POST /api/records/upload` (multipart)
 5. `POST /api/records/{id}/process`
 6. `GET /api/profiles/{id}/dashboard`
+
+### Add records from mobile UI
+1. Open **Records** tab.
+2. Tap one of:
+   - **Upload PDF / Image**
+   - **Take Photo**
+   - **Upload from Gallery**
+3. After upload, the record appears in the list.
+4. Call `POST /api/records/{id}/process` to run mock OCR/extraction.
+
+### Upload API with no extra params (only file)
+`POST /api/records/upload` now supports file-only multipart upload.
+If you do not send `profileId`, `recordType`, `providerName`, `recordDate`, backend will:
+- use the first profile in your account
+- set `recordType=GENERAL`
+- set `providerName=Unknown Provider`
+- set `recordDate=today`
+
+Example:
+```bash
+curl -X POST http://localhost:8080/api/records/upload \
+  -H "X-User-Id: 1" \
+  -H "X-Account-Id: 1" \
+  -F "file=@/absolute/path/to/report.pdf"
+```
 
 ---
 

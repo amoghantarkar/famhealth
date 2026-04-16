@@ -25,15 +25,30 @@ public class RecordService {
     private final ExtractionProvider extractionProvider;
 
     public RecordUploadResponse upload(Long profileId, String recordType, String providerName, java.time.LocalDate recordDate, MultipartFile file, RequestUser user){
-        PersonProfile profile = profileRepository.findById(profileId).orElseThrow();
+        PersonProfile profile = resolveProfile(profileId, user);
         if (!profile.getAccount().getId().equals(user.accountId())) throw new ApiException("Access denied");
         UserEntity uploader = userRepository.findById(user.userId()).orElseThrow();
         MedicalRecord record = medicalRecordRepository.save(MedicalRecord.builder().account(profile.getAccount()).profile(profile).uploadedByUser(uploader)
-                .recordType(recordType).providerName(providerName).recordDate(recordDate).sourceType("UPLOAD").processingStatus("UPLOADED").createdAt(Instant.now()).build());
+                .recordType(defaultIfBlank(recordType, "GENERAL"))
+                .providerName(defaultIfBlank(providerName, "Unknown Provider"))
+                .recordDate(recordDate == null ? java.time.LocalDate.now() : recordDate)
+                .sourceType("UPLOAD").processingStatus("UPLOADED").createdAt(Instant.now()).build());
         String key = storageService.upload(file);
         recordFileRepository.save(RecordFile.builder().medicalRecord(record).storageKey(key).fileName(file.getOriginalFilename()).mimeType(file.getContentType())
                 .fileSize(file.getSize()).uploadedAt(Instant.now()).checksum(String.valueOf(file.getSize())).build());
         return new RecordUploadResponse(record.getId(), record.getProcessingStatus());
+    }
+
+    private PersonProfile resolveProfile(Long profileId, RequestUser user) {
+        if (profileId != null) {
+            return profileRepository.findById(profileId).orElseThrow();
+        }
+        return profileRepository.findFirstByAccountIdAndDeletedFalseOrderByCreatedAtAsc(user.accountId())
+                .orElseThrow(() -> new ApiException("No profile found for this account. Create a profile first."));
+    }
+
+    private String defaultIfBlank(String value, String fallback) {
+        return value == null || value.isBlank() ? fallback : value;
     }
 
     public List<RecordResponse> list(RequestUser user){
