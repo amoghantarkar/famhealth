@@ -19,16 +19,16 @@ A production-style MVP for a **personal health record organizer** (not diagnosis
 
 ---
 
-## Run Locally (Laptop + Phone Emulator)
+## Quick Start
 
-### 1) Prerequisites
+### Prerequisites
 - Docker Desktop
 - Node.js 20+
 - npm 10+
 - Java 17 (optional if you run backend only through Docker)
 - Expo CLI (`npm i -g expo eas-cli`)
 
-### 2) Start backend + database
+### Backend
 ```bash
 cp .env.backend.example .env.backend
 docker compose up --build
@@ -36,7 +36,7 @@ docker compose up --build
 Backend: `http://localhost:8080`
 Swagger: `http://localhost:8080/swagger-ui.html`
 
-### 3) Start mobile app (Expo)
+### Mobile
 ```bash
 cd mobile
 npm install
@@ -47,7 +47,7 @@ Then:
 - press `i` for iOS simulator (macOS), or
 - scan QR with Expo Go on physical phone.
 
-### 4) Make mobile reach backend from phone
+### Make mobile reach backend from phone
 If testing on a physical Android device, `localhost` inside the app points to the phone, not your laptop.
 
 Use one of these:
@@ -57,7 +57,7 @@ Use one of these:
 
 Update `mobile/src/api/client.ts` base URL accordingly.
 
-### 5) Quick smoke test
+### Quick smoke test
 1. `POST /api/auth/signup`
 2. Add headers to requests:
    - `X-User-Id: <userId from signup/login>`
